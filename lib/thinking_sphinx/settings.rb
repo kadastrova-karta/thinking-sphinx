@@ -3,7 +3,7 @@
 require "pathname"
 
 class ThinkingSphinx::Settings
-  ALWAYS_ABSOLUTE = %w[ socket ]
+  ALWAYS_ABSOLUTE = %w[]
   FILE_KEYS = %w[
     indices_location configuration_file bin_path log query_log pid_file
     binlog_path snippets_file_prefix sphinxql_state path stopwords wordforms
