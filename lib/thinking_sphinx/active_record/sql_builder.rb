@@ -10,7 +10,11 @@ module ThinkingSphinx
       end
 
       def sql_query
-        statement.to_relation.to_sql.gsub(/\n/, "\\\n")
+        statement.to_relation.to_sql.dup.tap do |res|
+          res.gsub!(/\n/, "\\\n")
+
+          res.gsub!(/\$(\w+)/) { |m| "\\#{m}" } if config.settings["escaped_sql"]
+        end
       end
 
       def sql_query_range
