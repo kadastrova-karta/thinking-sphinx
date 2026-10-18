@@ -9,8 +9,7 @@ module ThinkingSphinx::Connection
     options = {
       :host      => configuration.searchd.address,
       :port      => configuration.searchd.mysql41,
-      :socket    => configuration.searchd.socket,
-      :reconnect => true
+      :socket    => configuration.searchd.socket
     }.merge(configuration.settings['connection_options'] || {})
 
     connection_class.new options
