@@ -3,6 +3,16 @@
 require 'spec_helper'
 
 describe ThinkingSphinx::Connection do
+  describe ".new" do
+    after :each do
+      ThinkingSphinx::Configuration.reset
+    end
+
+    it "leaves reconnection to the pool instead of libmysql" do
+      expect(ThinkingSphinx::Connection.new.send(:options)).not_to have_key(:reconnect)
+    end
+  end
+
   describe '.take' do
     let(:pool)             { double 'pool' }
     let(:connection)       { double 'connection', :base_error => StandardError }
