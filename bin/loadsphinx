@@ -83,6 +83,7 @@ load_manticore () {
     curl --location https://repo.manticoresearch.com/manticore-repo.noarch.deb -o repo.deb
     sudo dpkg -i repo.deb
     sudo apt update
+    sudo apt-get remove -y sphinxsearch
     sudo apt install manticore
   else
     sudo apt-get install default-libmysqlclient-dev
