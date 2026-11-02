@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'logger'
 gem 'mysql2', '~> 0.5.0',  :platform => :ruby
 gem 'pg',     '~> 1.5.9', :platform => :ruby
 

@@ -37,6 +37,24 @@ describe ThinkingSphinx::ActiveRecord::SQLBuilder do
       allow(source).to receive_messages :type => 'mysql'
     end
 
+    context "with ranged query placeholders" do
+      let(:sql) { "SELECT id FROM articles WHERE id BETWEEN $start AND $end".freeze }
+
+      before :each do
+        allow(relation).to receive(:to_sql).and_return(sql)
+      end
+
+      it "leaves placeholders unchanged by default" do
+        expect(builder.sql_query).to eq(sql)
+      end
+
+      it "escapes placeholders for a shell-generated configuration when enabled" do
+        config.settings["escaped_sql"] = true
+
+        expect(builder.sql_query).to eq("SELECT id FROM articles WHERE id BETWEEN \\$start AND \\$end")
+      end
+    end
+
     it "adds source associations to the joins of the query" do
       source.associations << double('association',
         :stack => [:user, :posts], :string? => false)

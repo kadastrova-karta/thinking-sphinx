@@ -16,6 +16,16 @@ describe ThinkingSphinx::Configuration do
     expect(loading_object).to receive(loading_method).with(file).once
   end
 
+  it "does not emit the obsolete Manticore workers default" do
+    expect(config.searchd.render).not_to match(/^\s*workers\s*=/)
+  end
+
+  it "preserves socket paths for the daemon's filesystem" do
+    write_configuration("socket" => "relative/searchd.sock", "absolute_paths" => false)
+
+    expect(config.searchd.socket).to eq("relative/searchd.sock:mysql41")
+  end
+
   describe '.instance' do
     it "returns an instance of ThinkingSphinx::Configuration" do
       expect(ThinkingSphinx::Configuration.instance).

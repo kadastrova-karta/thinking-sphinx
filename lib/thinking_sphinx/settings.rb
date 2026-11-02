@@ -17,7 +17,6 @@ class ThinkingSphinx::Settings
     "log"                      => "log/ENVIRONMENT.searchd.log",
     "query_log"                => "log/ENVIRONMENT.searchd.query.log",
     "binlog_path"              => "tmp/binlog/ENVIRONMENT",
-    "workers"                  => "threads",
     "mysql_encoding"           => "utf8",
     "maximum_statement_length" => (2 ** 23) - 5,
     "real_time_tidy"           => false,
