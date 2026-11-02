@@ -72,19 +72,28 @@ load_manticore () {
       url="https://repo.manticoresearch.com/repository/manticoresearch_focal/dists/focal/main/binary-amd64/manticore_4.0.2-210921-af497f245_amd64.deb";;
     4.2.0)
       url="https://repo.manticoresearch.com/repository/manticoresearch_focal/dists/focal/main/binary-amd64/manticore_4.2.0-211223-15e927b28_amd64.deb";;
-    6.0.0)
+    6.0.0|29.9.0)
       url="skipped";;
     *)
       echo "No Manticore version $version available"
       exit 1;;
   esac
 
-  if [ "$version" == "6.0.0" ]; then
+  if [ "$version" == "6.0.0" ] || [ "$version" == "29.9.0" ]; then
     curl --location https://repo.manticoresearch.com/manticore-repo.noarch.deb -o repo.deb
     sudo dpkg -i repo.deb
     sudo apt update
     sudo apt-get remove -y sphinxsearch
-    sudo apt install manticore
+    if [ "$version" == "29.9.0" ]; then
+      package_version=$(apt-cache madison manticore | awk -v version="$version-" 'index($3, version) == 1 { print $3; exit }')
+      if [ -z "$package_version" ]; then
+        echo "Manticore $version is unavailable in the configured repository" >&2
+        exit 1
+      fi
+      sudo apt-get install -y "manticore=$package_version"
+    else
+      sudo apt-get install -y manticore
+    fi
   else
     sudo apt-get install default-libmysqlclient-dev
     curl --location $url -o manticore.deb

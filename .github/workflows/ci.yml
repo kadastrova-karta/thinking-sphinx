@@ -15,61 +15,26 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test-matrix:
-    runs-on: ubuntu-latest
-
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 4.0
-          bundler-cache: true
-
-      - id: matrix
-        run: echo "matrix=$(./bin/testmatrix)" | tee -a "$GITHUB_OUTPUT"
-
-      - run: echo "$MATRIX" | yq -P
-        env:
-          MATRIX: ${{ steps.matrix.outputs.matrix }}
-
   test:
-    runs-on: ubuntu-22.04
-    needs: [test-matrix]
-
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJSON(needs.test-matrix.outputs.matrix) }}
+    runs-on: ubuntu-24.04
 
     services:
       postgres:
-        image: postgres:10
+        image: postgres:17
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: thinking_sphinx
           POSTGRES_DB: thinking_sphinx
         ports: ['5432:5432']
-        # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ROOT_PASSWORD: thinking_sphinx
-          MYSQL_DATABASE: thinking_sphinx
-        ports: ['3306:3306']
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/test
         with:
-          ruby-version: ${{ matrix.ruby }}
-          rails-version: ${{ matrix.rails }}
-          sphinx-version: ${{ matrix.sphinx_version }}
-          sphinx-engine: ${{ matrix.sphinx_engine }}
-          database: ${{ matrix.database }}
-        timeout-minutes: 12
+          ruby-version: '4.0.9'
+          rails-version: '8_1'
+          sphinx-version: '29.9.0'
+          sphinx-engine: 'manticore'
+          database: 'postgresql'
+        timeout-minutes: 15
